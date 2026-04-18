@@ -1,0 +1,20 @@
+# blot_vpype.toml — vpype-gcode profile for the Blot 2-axis pen plotter.
+#
+# Use with:
+#   vpype -c firmware/blot_vpype.toml -I firmware/blot.vpy
+# Or programmatically:
+#   execute(..., global_opt='-c firmware/blot_vpype.toml')
+#
+# Blot's firmware advertises as GRBL 1.1f with M3 S<us> = pen down (servo pulse
+# width in microseconds) and M5 = pen up. See firmware/SUPPORTED_COMMANDS.md.
+
+[gwrite.blot]
+unit = "mm"
+vertical_flip = true                 # SVG Y-down → plotter Y-up
+document_start = "G21\nG90\nM5\n"    # mm, absolute, pen up
+line_start = "M5\n"                  # lift pen before traveling to a new line's start
+segment_first = "G00 X{x:.3f} Y{y:.3f}\nM3 S1700\n"   # rapid to start, then drop pen
+segment = "G01 X{x:.3f} Y{y:.3f} F100000\n"           # request max — firmware caps at $110
+line_end = "M5\n"                    # lift pen at end of each line
+document_end = "M5\nG00 X0 Y0\n"     # pen up, return home
+info = "Blot 2-axis pen plotter — servo pen via M3 S<us>/M5, feedrate requested as F100000 (capped by firmware $110 max_feedrate)"

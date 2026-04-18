@@ -1,0 +1,18 @@
+# Python caches
+__pycache__/
+*.pyc
+
+# Arduino / compiled firmware artifacts
+*.o
+build/
+test
+test_gcode
+
+# Generated output
+tools/out.*
+tools/preview.png
+
+# Personal / test images
+tools/*.jpg
+tools/*.jpeg
+tools/*.png
