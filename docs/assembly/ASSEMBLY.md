@@ -50,7 +50,7 @@ Here are all the parts that come with your Blot. The source of truth for the Blo
 | 1        | USB-C Charger (Brick)                 | ![Screenshot 2024-06-14 at 4.59.59 PM](./assets/Screenshot%202024-06-14%20at%204.59.59%20PM.png)   |
 | 1        | Pilot G-2 Roller Pen                  | ![Screenshot 2024-06-14 at 5.05.18 PM](./assets/Screenshot%202024-06-14%20at%205.05.18%20PM.png)   |
 
-<!-- 
+<!--
 - __1 x__ 3mm allen key
 - __1 x__ 2.5mm allen key
 - __1 x__ 2mm allen key
@@ -98,20 +98,20 @@ The first part of the Blot we will assemble looks like this
 
 It uses these parts:
 
-- __4 x__ M5x25 Button Cap Screw
-- __8 x__ M5x35 Button Cap Screw
-- __8 x__ 625zz V-Wheel
-- __8 x__ 5x16x5mm flanged bearing
-- __4 x__ 6mm tall x 8mm OD x M5 inner Alumnium Spacer
-- __12 x__ M5 Nut
-- __4 x__ 6mm tall x M5 inner Eccentric Spacer
-- __4 x__ 1mm tall x 10mm OD x M5 inner Alumninum Spacer
-- __1 x__ Carriage
-- __1 x__ Carriage Plate
+- **4 x** M5x25 Button Cap Screw
+- **8 x** M5x35 Button Cap Screw
+- **8 x** 625zz V-Wheel
+- **8 x** 5x16x5mm flanged bearing
+- **4 x** 6mm tall x 8mm OD x M5 inner Alumnium Spacer
+- **12 x** M5 Nut
+- **4 x** 6mm tall x M5 inner Eccentric Spacer
+- **4 x** 1mm tall x 10mm OD x M5 inner Alumninum Spacer
+- **1 x** Carriage
+- **1 x** Carriage Plate
 
 You'll need these tools:
 
-- __1 x__ 3mm allen key
+- **1 x** 3mm allen key
 
 Align the metal plate with the carriage. It will only align one way.
 
@@ -141,7 +141,7 @@ You'll notice that some of the holes are a bit larger. We'll place eccentric nut
 
 ![PXL_20240613_152403096.jpg](./assets/PXL_20240613_152403096.jpg)
 
-Take a 35mm screw and an eccentric nut. 
+Take a 35mm screw and an eccentric nut.
 
 ![PXL_20240613_152355368.jpg](./assets/PXL_20240613_152355368.jpg)
 
@@ -181,16 +181,16 @@ Let's put together the legs of the machine.
 
 You'll need these parts:
 
-- __2 x__ Timing Belt Pulley
-- __4 x__ less than .5in diameter Rubber Feet
-- __8 x__ M3x10 Button Cap Screw
-- __2 x__ Motor Leg
-- __2 x__ 42mm x 42mm (face) x 38mm (tall) Stepper Motors
+- **2 x** Timing Belt Pulley
+- **4 x** less than .5in diameter Rubber Feet
+- **8 x** M3x10 Button Cap Screw
+- **2 x** Motor Leg
+- **2 x** 42mm x 42mm (face) x 38mm (tall) Stepper Motors
 
 And these tools:
 
-- __1 x__ 2.5mm allen key
-- __1 x__ 2mm allen key
+- **1 x** 2.5mm allen key
+- **1 x** 2mm allen key
 
 We'll start by placing the timing belt pulley on to the shaft of the stepper motor. The top of the pulley should be flush with the top of the shaft.
 
@@ -226,17 +226,17 @@ We're done!
 
 To put together the pen rail you'll need:
 
-- __1 x__ 3mm allen key
-- __1 x__ M5x25 Button Cap Screw
-- __1 x__ M5 Nut
-- __1 x__ 1mm tall x 10mm OD x M5 inner Alumninum Spacer
-- __1 x__ Printed Rail
-- __2 x__ 5x16x5mm flanged bearing
-- __1 x__ Servo (25mm cable) + arm
+- **1 x** 3mm allen key
+- **1 x** M5x25 Button Cap Screw
+- **1 x** M5 Nut
+- **1 x** 1mm tall x 10mm OD x M5 inner Alumninum Spacer
+- **1 x** Printed Rail
+- **2 x** 5x16x5mm flanged bearing
+- **1 x** Servo (25mm cable) + arm
 
 You'll need these tools:
 
-- __1 x__ 3mm allen key
+- **1 x** 3mm allen key
 
 First put together another idler stack on a M5x25 screw.
 
@@ -254,16 +254,16 @@ Let's make the pen holder.
 
 You'll need these parts:
 
-- __3 x__ M5x25 Button Cap Screw
-- __4 x__ M5 Nut
-- __1 x__ M5x20, knurled cylinder head
-- __1 x__ Tool Head
-- __1 x__ 6mm tall x M5 inner Eccentric Spacer
-- __3 x__ 625zz V-Wheel
+- **3 x** M5x25 Button Cap Screw
+- **4 x** M5 Nut
+- **1 x** M5x20, knurled cylinder head
+- **1 x** Tool Head
+- **1 x** 6mm tall x M5 inner Eccentric Spacer
+- **3 x** 625zz V-Wheel
 
 You'll need these tools:
 
-- __1 x__ 3mm allen key
+- **1 x** 3mm allen key
 
 Let's add the eccentric wheel first. Make a stack with the M5x25 screw like so
 
@@ -273,7 +273,7 @@ Attach it to the pen holder by slipping it through the printed part and securing
 
 ![Screenshot 2024-06-14 at 4.54.00 PM.png](./assets/Screenshot%202024-06-14%20at%204.54.00%20PM.png)
 
-Attach the two fixed wheels with the remaining 2 M5x25 screws. 
+Attach the two fixed wheels with the remaining 2 M5x25 screws.
 
 ![Screenshot 2024-06-14 at 4.54.30 PM.png](./assets/Screenshot%202024-06-14%20at%204.54.30%20PM.png)
 
@@ -456,7 +456,7 @@ Insert the control board into the machine.
 
 Plug in all the wires.
 
-First, plug in the servo motor wires. That's the brown, red, yellow wires. 
+First, plug in the servo motor wires. That's the brown, red, yellow wires.
 
 It's **very important** that the brown wire be on the side with the little circle. That means the metal pins will be on the inner side of the board (not facing the outer edge).
 
@@ -496,190 +496,20 @@ Adjust the eccentric nut on the pen carriage so it rides smoothly. Not too tight
 
 Ready to run.
 
-### Running Your Blot
-
-Now it's time to run your Blot. 
-
-[Check out a quick video demonstrating how to run a Blot here.](https://youtu.be/qDP5CNjFHJE)
-
-To run your Blot you'll have to:
-
-- Flash firmware to your Blot
-- Connecting
-  - Power your Blot.
-  - Connect it to the web editor.
-- Home your machine (set the origin).
-- Fixture paper to draw on.
-- Set the lever on the servo.
-- Set the pen height for drawing.
-
-__Flashing Firmware__
-
-The first step to running your Blot is to flash the Blot firmware to the Xiao.
-
-[You can download the firmware here.](https://github.com/hackclub/blot/raw/main/hardware/motor-control-board/firmware/uf2/firmware.ino.uf2)
-
-First hold down the boot button (right button with a small `B` next to it) on your Xiao and then plug it into your computer while still holding the button.
-
-<img width="500" src="./assets/xiao-labelled.png" />
-
-It should appear as a drive, at which point you can release the button. If it doesn't appear, try again until it appears.
-
-Next drop the firmware `.uf2` file onto drive.
-
-Now the firmware is flashed.
-
-__Connecting__
-
-To power the Blot plug it into the USB-C brick that comes with your machine. Any USB-C brick that can deliver at least 20W should work. The Blot expects 9V 1A.
-
-Flip the power switch on the board to turn the Blot on.
-
-![PXL_20240710_153733136.jpg](./assets/PXL_20240710_153733136.jpg)
-
-Connect your Blot to the web editor by plugging the Xiao in over USB.
-
-![PXL_20240710_153841116.jpg](./assets/PXL_20240710_153841116.jpg)
-
-Connect to your Blot by hovering over `Machine control` and selecting `Connect to machine`
-
-![Screenshot 2024-07-10 at 5.05.53 PM.png](./assets/Screenshot%202024-07-10%20at%205.05.53 PM.png)
-
-If this is the first time you've connected with this Blot you'll get a pop-up to authorize the web serial connection. Select the item that says "Xiao".
-
-__Homing__
-
-To home your Blot.
-
-Turn off the motors.
-
-![Screenshot 2024-07-10 at 4.58.46 PM.png](./assets/Screenshot%202024-07-10%20at%204.58.46 PM.png)
-
-Manually move the Blot to the center position.
-
-![PXL_20240710_183002315.jpg](./assets/PXL_20240710_183002315.jpg)
-
-Turn on the motors.
-
-![Screenshot 2024-07-10 at 4.59.27 PM.png](./assets/Screenshot%202024-07-10%20at%204.59.27 PM.png)
-
-Click `Move towards origin`. Note which corner the Blot moves towards.
-
-![Screenshot 2024-07-10 at 5.00.16 PM.png](./assets/Screenshot%202024-07-10%20at%205.00.16 PM.png)
-
-Turn off the motors.
-
-![Screenshot 2024-07-10 at 4.58.46 PM.png](./assets/Screenshot%202024-07-10%20at%204.58.46 PM.png)
-
-Manually move your Blot all the way to the corner it moved towards.
-
-![PXL_20240710_174439847.jpg](./assets/PXL_20240710_174439847.jpg)
-
-Click `Set Origin`.
-
-![Screenshot 2024-07-10 at 5.01.21 PM.png](./assets/Screenshot%202024-07-10%20at%205.01.21 PM.png)
-
-Turn on the motors.
-
-![Screenshot 2024-07-10 at 4.59.27 PM.png](./assets/Screenshot%202024-07-10%20at%204.59.27 PM.png)
-
-Depending on how your stepper motors are plugged in the drawing may be mirrored. You can correct this by changing whether the motors are plugged in with the metal pins showing face up or hidden face down. The correct orientation may be some combination of the two.
-
-__Fixturing Paper__
-
-Secure a piece of paper to draw on. I generally tape (or magnet down) the other side of the paper too.
-
-![PXL_20240710_153943015.jpg](./assets/PXL_20240710_153943015.jpg)
-
-__Setting Lever__
-
-The servo lever lifts the pen. To set the servo lever range properly.
-
-Remove the lever arm from the servo.
-
-![PXL_20240710_154016398.jpg](./assets/PXL_20240710_154016398.jpg)
-
-Set the pen to the up position in the editor.
-
-![Screenshot 2024-07-10 at 5.01.58 PM.png](./assets/Screenshot%202024-07-10%20at%205.01.58 PM.png)
-
-Place the lever arm back on in the up position.
-
-__Setting the Pen Height__
-
-Loosen the set screw on the pen.
-
-Move the pen to be just above the paper in the up position.
-
-It should look like this when you are done.
-
-![PXL_20240710_154152531.jpg](./assets/PXL_20240710_154152531.jpg)
-
-__Draw!__
-
-Pull up the art piece you want to draw in the code editor.
-
-Hit `Run` to render the piece in the editor.
-
-![Screenshot 2024-07-10 at 5.07.56 PM.png](./assets/Screenshot%202024-07-10%20at%205.07.56 PM.png)
-
-Then hover over `Machine control` and select `Run machine`.
-
-![Screenshot 2024-07-10 at 5.08.35 PM.png](./assets/Screenshot%202024-07-10%20at%205.08.35 PM.png)
-
-Note that you must keep this tab active, or the communication speed (and your machine) will slow down. If you want to do something else on the computer just move the tab to a new window.
-
-Watch Blot turn the code into a real thing.
-
-![Screenshot 2024-07-11 at 2.01.34 PM.png](./assets/Screenshot%202024-07-11%20at%202.01.34 PM.png)
-
-For best results, I like to use a whiteboard ([which I bought for $10 at Target](https://www.amazon.com/Brand-Frameless-Magnetic-Dry-Erase-Board/dp/B0845T7JLC?source=ps-sl-shoppingads-lpcontext&ref_=fplfs&smid=ATVPDKIKX0DER&th=1)) with magnets to provide a flat surface and hold down paper.
-
-![PXL_20240711_150846841.jpg](./assets/PXL_20240711_150846841.jpg)
-
-### Send us a Postcard
-
-We're building a Blot art wall back at HQ. After you build your machine pick up a local postcard and use Blot to draw your art on the back.
-
-I picked up this cool vintage postcard from the antique store next door to Hack Club HQ. It shows a Vermont lake.
-
-![PXL_20240711_181315601.jpg](./assets/PXL_20240711_181315601.jpg)
-
-Here it is with my art piece drawn on the back. Ready to send to HQ.
-
-Make sure you sign it too!
-
-![PXL_20240711_181326466.jpg](./assets/PXL_20240711_181326466.jpg)
-
-Hack Club HQ address is
-
-```
-Hack Club
-15 Falls Rd 
-Shelburne, VT 05482
-USA
-```
-
 ### Debugging Common Issues
 
 Your Blot can draw quite precisely, poor performance is often due to:
 
 - Bad wheel spacing on the carriage or pen holder.
-  
   - To address this use the wrench to turn the eccentric nuts. The rails or pen holder should not move other than the direction they are intended to slide in when you shake them. The wheels should be just tight enough to hold things in place.
 
 - Bad pen height.
-  
   - If your drawing has irregular pen strokes your pen may not be low enough or your surface may be uneven.
 
 - Machine improperly homed.
-
   - Ensure that your blot is all the way in the correct corner when you press set origin. Then ensure your blot starts in that same corner when you run your project.
 
 - Paper sliding.
-  
   - To secure the paper you can place one end beneath the Blot.
-  
   - You can use tape to secure the other side.
-  
   - You can also purchase a small whiteboard with magnets. I've found this to be the most reliable technique.

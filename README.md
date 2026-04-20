@@ -1,8 +1,8 @@
-# rmrrf
+# upgraded-blot
 
-> **Heads up.** Everything you see in this folder was made in an afternoon with the help of AI (Claude Opus). It's not my best work, but it's what I could do with limited time.
+> **Heads up.** This project was built in an afternoon for RMRRF. Changes from the stock blot were made with the help of AI (Claude Opus). It's not my best work, but it's what I could do with limited time.
 
-An upgrade for [Blot](https://blot.hackclub.com). Hack Club's 2-axis pen plotter. See the [original repo](https://github.com/hackclub/blot) for hardware design, assembly instructions, and the original firmware.
+A fork of [Blot](https://blot.hackclub.com) (Hack Club's 2-axis pen plotter) for GRBL-compatibility and photo-to-plotter desktop app. Originally built for [RMRRF](https://rmrrf.com) 2026 as an interactive exhibit. See the [original Blot repo](https://github.com/hackclub/blot) for hardware design, assembly instructions, and the stock firmware.
 
 ## Firmware for GRBL support
 
