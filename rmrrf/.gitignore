@@ -5,8 +5,12 @@ __pycache__/
 # Arduino / compiled firmware artifacts
 firmware/*.o
 firmware/build/
-firmware/test
-firmware/test_gcode
+
+# Host-test build artifacts (sources are tracked; only generated files are ignored)
+firmware/test/*.o
+firmware/test/mocks/*.o
+firmware/test/mocks/**/*.o
+firmware/test/run_tests
 
 # UI save-dialog defaults (land in ui/ when the user keeps the default path)
 ui/out.*
