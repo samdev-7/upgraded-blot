@@ -6,7 +6,7 @@ Catmull-Rom. Returns the smoothed continuous path in SVG pixel units so vpype ca
 layout / linesimplify / filter / show / export.
 
 Run via vpype:
-    vpype script firmware/photo_to_lineart.py \
+    vpype script rmrrf/ui/photo_to_lineart.py \
         linemerge --tolerance 0.5mm \
         linesort --two-opt \
         linesimplify --tolerance 0.1mm \
@@ -15,10 +15,10 @@ Run via vpype:
         show
 
 Or use the recipe:
-    vpype -I firmware/blot.vpy
+    vpype -I rmrrf/ui/blot.vpy
 
 Params are module-level defaults below. Override any at the shell with PTL_<NAME>,
-e.g. `PTL_DENSITY=0.4 PTL_GAMMA=1.8 vpype -I firmware/blot.vpy`.
+e.g. `PTL_DENSITY=0.4 PTL_GAMMA=1.8 vpype -I rmrrf/ui/blot.vpy`.
 """
 
 from __future__ import annotations

@@ -332,7 +332,7 @@ def main():
 
     print("""
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- Blot tuning — follow firmware/TUNING.md
+ Blot tuning — follow rmrrf/firmware/TUNING.md
 
  PHYSICAL SETUP (do this before continuing):
    1. Put a pen in the holder with tip touching paper.

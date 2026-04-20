@@ -167,6 +167,17 @@ class CombingPlanner:
         if len(self.skel_ys) == 0:
             return None
 
+        # If either endpoint is outside the foreground, this isn't a
+        # foreground-to-foreground hop (e.g. the branding watermark in a
+        # corner). Let the plotter fly straight — detouring through the
+        # mask interior would be a pointless cross-canvas diversion.
+        ix0 = int(np.clip(round(x0), 0, self.w - 1))
+        iy0 = int(np.clip(round(y0), 0, self.h - 1))
+        ix1 = int(np.clip(round(x1), 0, self.w - 1))
+        iy1 = int(np.clip(round(y1), 0, self.h - 1))
+        if not (self.mask[iy0, ix0] and self.mask[iy1, ix1]):
+            return None
+
         s = self._nearest_skel(x0, y0)
         g = self._nearest_skel(x1, y1)
         if s < 0 or g < 0:

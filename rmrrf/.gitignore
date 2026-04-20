@@ -1,0 +1,18 @@
+# Python caches
+__pycache__/
+*.pyc
+
+# Arduino / compiled firmware artifacts
+firmware/*.o
+firmware/build/
+firmware/test
+firmware/test_gcode
+
+# UI save-dialog defaults (land in ui/ when the user keeps the default path)
+ui/out.*
+ui/preview.png
+
+# Personal / test images that tend to land in the tools folder
+firmware/tools/*.jpg
+firmware/tools/*.jpeg
+firmware/tools/*.png

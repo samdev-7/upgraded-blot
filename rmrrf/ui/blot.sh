@@ -4,7 +4,7 @@
 set -euo pipefail
 
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd -- "$HERE/.." && pwd)"
+REPO_ROOT="$(cd -- "$HERE/../.." && pwd)"
 PY="$HOME/.local/pipx/venvs/vpype/bin/python"
 
 if [[ ! -x "$PY" ]]; then
@@ -14,4 +14,4 @@ if [[ ! -x "$PY" ]]; then
 fi
 
 cd "$REPO_ROOT"
-exec "$PY" firmware/blot_ui.py "$@"
+exec "$PY" rmrrf/ui/blot_ui.py "$@"

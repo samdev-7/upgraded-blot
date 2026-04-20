@@ -8,7 +8,7 @@ Two tabs:
 
 Launch via the vpype pipx env (PySide6 / QtViewer / vpype_cli / pyserial on path):
 
-    /Users/samliu/.local/pipx/venvs/vpype/bin/python firmware/blot_ui.py
+    /Users/samliu/.local/pipx/venvs/vpype/bin/python rmrrf/ui/blot_ui.py
 """
 
 from __future__ import annotations
@@ -239,6 +239,201 @@ def _clip_polyline_against_box(
         buf.append(complex(px, py))
     flush()
     return out
+
+
+def _split_strokes_at_incidence(
+    lines: list[np.ndarray], tol: float, max_iters: int = 6,
+) -> list[np.ndarray]:
+    """Split each polyline wherever another polyline's endpoint lands on its
+    interior (within `tol`). This turns Hershey glyphs like `K`, where the
+    diagonals meet the vertical bar at its midpoint, into a graph with shared
+    endpoints that downstream traversal can chain without pen-lifts.
+    """
+    def do_pass(pool: list[np.ndarray]) -> tuple[list[np.ndarray], bool]:
+        endpoints = [pl[0] for pl in pool] + [pl[-1] for pl in pool]
+        out: list[np.ndarray] = []
+        changed = False
+        for pl in pool:
+            if len(pl) < 2:
+                continue
+            pts = np.column_stack([pl.real, pl.imag])
+            own = {
+                (round(pl[0].real, 2), round(pl[0].imag, 2)),
+                (round(pl[-1].real, 2), round(pl[-1].imag, 2)),
+            }
+            splits: dict[tuple[int, float], None] = {}
+            for ep in endpoints:
+                if (round(ep.real, 2), round(ep.imag, 2)) in own:
+                    continue
+                best: tuple[int, float, float] | None = None
+                for i in range(len(pts) - 1):
+                    p0x, p0y = pts[i]
+                    p1x, p1y = pts[i + 1]
+                    sx, sy = p1x - p0x, p1y - p0y
+                    sl = sx * sx + sy * sy
+                    if sl < 1e-9:
+                        continue
+                    t = ((ep.real - p0x) * sx + (ep.imag - p0y) * sy) / sl
+                    t = max(0.0, min(1.0, t))
+                    qx = p0x + t * sx
+                    qy = p0y + t * sy
+                    d = float(np.hypot(ep.real - qx, ep.imag - qy))
+                    if d < tol and 0.05 < t < 0.95:
+                        if best is None or d < best[2]:
+                            best = (i, float(t), d)
+                if best is not None:
+                    splits[(best[0], round(best[1], 4))] = None
+            if not splits:
+                out.append(pl)
+                continue
+            changed = True
+            ordered = sorted(splits.keys())
+            parts: list[np.ndarray] = []
+            current: list[complex] = [complex(pl[0])]
+            idx = 0
+            for i in range(len(pl) - 1):
+                p0 = pl[i]
+                p1 = pl[i + 1]
+                while idx < len(ordered) and ordered[idx][0] == i:
+                    _, t = ordered[idx]
+                    new_pt = p0 + t * (p1 - p0)
+                    current.append(new_pt)
+                    if len(current) >= 2:
+                        parts.append(np.asarray(current, dtype=np.complex128))
+                    current = [new_pt]
+                    idx += 1
+                current.append(p1)
+            if len(current) >= 2:
+                parts.append(np.asarray(current, dtype=np.complex128))
+            out.extend(parts)
+        return out, changed
+
+    lines = [pl for pl in lines if len(pl) >= 2]
+    for _ in range(max_iters):
+        lines, changed = do_pass(lines)
+        if not changed:
+            break
+    return lines
+
+
+def _optimize_text_strokes(lc, tol_px: float) -> list[np.ndarray]:
+    """Minimize pen-lifts for a Hershey-text LineCollection.
+
+    1. Pre-split strokes where one touches another's interior.
+    2. Cluster endpoints into graph nodes.
+    3. Per connected component, greedy-walk edges; when stuck with edges
+       unvisited elsewhere, backtrack over already-drawn strokes until a
+       vertex has an unvisited edge. The backtracked edges are re-emitted
+       in the output polyline, so the pen stays down and simply re-traces.
+
+    Each connected component becomes one output polyline → one pen-down per
+    glyph.
+    """
+    raw = [np.asarray(pl, dtype=np.complex128) for pl in lc if len(pl) >= 2]
+    if not raw:
+        return []
+    lines = _split_strokes_at_incidence(raw, tol_px)
+
+    nodes_xy: list[tuple[float, float]] = []
+
+    def cluster(pt: complex) -> int:
+        for i, (nx, ny) in enumerate(nodes_xy):
+            if abs(nx - pt.real) < tol_px and abs(ny - pt.imag) < tol_px:
+                return i
+        nodes_xy.append((float(pt.real), float(pt.imag)))
+        return len(nodes_xy) - 1
+
+    edges: list[tuple[int, int, np.ndarray]] = []
+    for pl in lines:
+        a = cluster(pl[0])
+        b = cluster(pl[-1])
+        edges.append((a, b, pl))
+
+    adj: list[list[tuple[int, int, int]]] = [[] for _ in nodes_xy]
+    for e_id, (a, b, _) in enumerate(edges):
+        adj[a].append((b, e_id, 0))    # traverse polyline forward
+        adj[b].append((a, e_id, 1))    # traverse polyline reversed
+
+    # Connected components via union-find.
+    parent = list(range(len(nodes_xy)))
+
+    def find(x: int) -> int:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(x: int, y: int) -> None:
+        parent[find(x)] = find(y)
+
+    for a, b, _ in edges:
+        union(a, b)
+
+    comps: dict[int, set[int]] = {}
+    for n in range(len(nodes_xy)):
+        comps.setdefault(find(n), set()).add(n)
+
+    result: list[np.ndarray] = []
+    for node_set in comps.values():
+        comp_edge_set = {e_id for e_id, (a, _, _) in enumerate(edges) if a in node_set}
+        if not comp_edge_set:
+            continue
+        # Prefer starting at an odd-degree node (a glyph leaf, e.g. the tip
+        # of an `L`) so the traversal naturally reaches all leaves.
+        degs = {n: sum(1 for _, e_id, _ in adj[n] if e_id in comp_edge_set)
+                for n in node_set}
+        odd = [n for n, d in degs.items() if d % 2 == 1]
+        start = odd[0] if odd else next(iter(node_set))
+
+        visited: set[int] = set()
+        path: list[tuple[int, int]] = []
+        stack = [start]
+        current = start
+        guard = 0
+        limit = len(comp_edge_set) * 8 + 16
+
+        while guard < limit:
+            guard += 1
+            step = next(
+                ((nbr, e_id, rev) for nbr, e_id, rev in adj[current]
+                 if e_id in comp_edge_set and e_id not in visited),
+                None,
+            )
+            if step is not None:
+                nbr, e_id, rev = step
+                path.append((e_id, rev))
+                visited.add(e_id)
+                stack.append(nbr)
+                current = nbr
+                continue
+            if len(visited) == len(comp_edge_set):
+                break
+            if len(stack) < 2:
+                break
+            prev = stack[-2]
+            retrace = next(
+                ((e_id, rev) for nbr, e_id, rev in adj[current]
+                 if nbr == prev and e_id in comp_edge_set),
+                None,
+            )
+            if retrace is None:
+                break
+            path.append(retrace)
+            stack.pop()
+            current = prev
+
+        stroke: list[complex] = []
+        for e_id, rev in path:
+            poly = edges[e_id][2]
+            if rev:
+                poly = poly[::-1]
+            if stroke:
+                stroke.extend(poly[1:])
+            else:
+                stroke.extend(poly)
+        if len(stroke) >= 2:
+            result.append(np.asarray(stroke, dtype=np.complex128))
+    return result
 
 
 ALL_ALGOS = frozenset({"stipple", "scribble", "pintr"})
@@ -1260,17 +1455,22 @@ class Main(QMainWindow):
                 new_lines.extend(_clip_polyline_against_box(line, exclusion))
             doc.layers[lid] = vp.LineCollection(new_lines)
 
-        # Hershey text emits one polyline per stroke — heavy on pen-up/down.
-        # Merge strokes whose endpoints coincide (fuses shared joints in a
-        # glyph, e.g. the two verticals of `H`), then two-opt the layer to
-        # chase the minimum travel. Two-opt is fine here because the text
-        # layer is tiny (a few dozen strokes after merging).
         doc = execute(
-            _branding_text_cmd(pos_px=(shift_x, shift_y), scale=scale)
-            + f" linemerge --layer {_BRANDING_LAYER} --tolerance 0.3mm"
-            + f" linesort --layer {_BRANDING_LAYER} --two-opt",
+            _branding_text_cmd(pos_px=(shift_x, shift_y), scale=scale),
             document=doc,
         )
+        # Hershey text emits one polyline per stroke and glyphs like K/H have
+        # strokes joining mid-bar (not at endpoints), so linemerge can't fuse
+        # them. Our optimizer splits at incidence points then greedy-walks
+        # each glyph with retracing so each character becomes one pen-down.
+        text_lc = doc.layers.get(_BRANDING_LAYER)
+        if text_lc is not None and len(text_lc) > 0:
+            optimized = _optimize_text_strokes(text_lc, tol_px=0.3 * _PX_PER_MM)
+            doc.layers[_BRANDING_LAYER] = vp.LineCollection(optimized)
+            doc = execute(
+                f"linesort --layer {_BRANDING_LAYER} --two-opt",
+                document=doc,
+            )
         return doc
 
     def _generate_failed(self, msg: str) -> None:
@@ -1283,7 +1483,7 @@ class Main(QMainWindow):
         if self.last_doc is None:
             return
         path, _ = QFileDialog.getSaveFileName(
-            self, "Save G-code", str(HERE / "tools" / "out.gcode"),
+            self, "Save G-code", str(HERE / "out.gcode"),
             "G-code (*.gcode *.nc)"
         )
         if not path:
@@ -1299,7 +1499,7 @@ class Main(QMainWindow):
         if self.last_doc is None:
             return
         path, _ = QFileDialog.getSaveFileName(
-            self, "Save SVG", str(HERE / "tools" / "out.svg"), "SVG (*.svg)"
+            self, "Save SVG", str(HERE / "out.svg"), "SVG (*.svg)"
         )
         if not path:
             return
@@ -1461,6 +1661,9 @@ class Main(QMainWindow):
             with open(tmp) as f:
                 lines = f.readlines()
             lines = self._maybe_comb(lines)
+            # Park the pen off to the side so the paper is easy to lift out.
+            # Explicit M5 ensures the pen is up regardless of the final state.
+            lines = list(lines) + ["M5\n", "G00 X0 Y120\n"]
             self._gcode_cache = lines
             return self._gcode_cache
         finally:
