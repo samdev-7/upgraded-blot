@@ -24,6 +24,8 @@ import traceback
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
+
 # Qt reads QT_SCALE_FACTOR when QApplication is constructed. Set it before any
 # PySide6 import triggers Qt initialization so the whole UI renders at 75%.
 os.environ.setdefault("QT_SCALE_FACTOR", "0.8")
@@ -157,6 +159,86 @@ PIPELINE_TAIL_FMT = (
     "linesort "
     "pagesize {canvas}mmx{canvas}mm"
 )
+
+# --- Branding (hackclub.com watermark in the top-left) -----------------------
+# 1 CSS px = 1/96 in, so 1 mm = 96/25.4 px — vpype uses pixels internally.
+_PX_PER_MM = 96.0 / 25.4
+_BRANDING_TEXT = "HACKCLUB.COM"
+_BRANDING_FONT = "futural"
+_BRANDING_SIZE_MM = 5.0
+_BRANDING_EDGE_MM = 2.5           # distance from canvas edge to glyph top/left
+_BRANDING_MARGIN_MM = 1.5         # whitespace kept clear around the text
+_BRANDING_LAYER = 3
+
+
+def _branding_text_cmd(
+    layer: int = _BRANDING_LAYER,
+    pos_px: tuple[float, float] | None = None,
+    scale: float = 1.0,
+) -> str:
+    """Emit the vpype `text` command. `pos_px` overrides the baseline position
+    (in pixels) — used by the measurement pass to render at (0, 0) before the
+    caller translates the result into the corner with matching margins.
+    `scale` multiplies the font size."""
+    if pos_px is None:
+        x_str = y_str = "0"
+    else:
+        x_str = f"{pos_px[0]}px"
+        y_str = f"{pos_px[1]}px"
+    size_mm = _BRANDING_SIZE_MM * scale
+    return (
+        f"text --font {_BRANDING_FONT} "
+        f"--size {size_mm}mm "
+        f"--position {x_str} {y_str} "
+        f"--layer {layer} "
+        f'"{_BRANDING_TEXT}"'
+    )
+
+
+def _clip_polyline_against_box(
+    line: np.ndarray, box: tuple[float, float, float, float],
+    step_px: float = 2.0,
+) -> list[np.ndarray]:
+    """Split a vpype polyline wherever it enters the [x0,y0,x1,y1] box.
+
+    Points inside are dropped; consecutive outside points are also broken at
+    segments whose midpoints cross the box (so a long diagonal between two
+    outside vertices can't streak ink through the branding whitespace).
+    The plotter lifts its pen between the returned sub-lines.
+    """
+    if len(line) < 2:
+        return []
+    x0, y0, x1, y1 = box
+    pts = np.column_stack([line.real, line.imag])
+
+    out: list[np.ndarray] = []
+    buf: list[complex] = []
+
+    def flush() -> None:
+        if len(buf) >= 2:
+            out.append(np.asarray(buf, dtype=np.complex128))
+        buf.clear()
+
+    for i in range(len(pts)):
+        px, py = float(pts[i, 0]), float(pts[i, 1])
+        if x0 <= px <= x1 and y0 <= py <= y1:
+            flush()
+            continue
+        if buf:
+            prev = buf[-1]
+            seg_len = float(np.hypot(px - prev.real, py - prev.imag))
+            if seg_len > step_px:
+                n = max(2, int(seg_len / step_px))
+                ts = np.linspace(0.0, 1.0, n)[1:-1]
+                sx = prev.real + ts * (px - prev.real)
+                sy = prev.imag + ts * (py - prev.imag)
+                if ((sx >= x0) & (sx <= x1) & (sy >= y0) & (sy <= y1)).any():
+                    flush()
+                    buf.append(complex(px, py))
+                    continue
+        buf.append(complex(px, py))
+    flush()
+    return out
 
 
 ALL_ALGOS = frozenset({"stipple", "scribble", "pintr"})
@@ -704,6 +786,21 @@ class Main(QMainWindow):
         al.addWidget(self.algo_combo, 1)
         controls.addWidget(algo_box)
 
+        layout_box = QGroupBox("Layout")
+        lform = QFormLayout(layout_box)
+        lform.setLabelAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.branding_toggle = QCheckBox()
+        self.branding_toggle.setChecked(True)
+        lform.addRow(QLabel("Branding"), self.branding_toggle)
+        scale_knob = Knob("scale", "Scale", 0.4, 2.5, 0.05, "float", frozenset())
+        self.scale_row = KnobRow(scale_knob, 1.0)
+        scale_label = QLabel("Branding scale")
+        lform.addRow(scale_label, self.scale_row)
+        # Scale only affects the branding text — dim it when branding is off.
+        self.branding_toggle.toggled.connect(self.scale_row.setEnabled)
+        self.branding_toggle.toggled.connect(scale_label.setEnabled)
+        controls.addWidget(layout_box)
+
         knobs_box = QGroupBox("Parameters")
         form = QFormLayout(knobs_box)
         form.setLabelAlignment(Qt.AlignRight | Qt.AlignVCenter)
@@ -1048,6 +1145,8 @@ class Main(QMainWindow):
     def _reset_knobs(self) -> None:
         for row in self.knob_widgets.values():
             row.reset()
+        self.scale_row.reset()
+        self.branding_toggle.setChecked(True)
         self.statusBar().showMessage("Parameters reset to defaults.")
 
     def _generate(self) -> None:
@@ -1075,7 +1174,6 @@ class Main(QMainWindow):
         self.gen_thread.start()
 
     def _generate_done(self, doc: vp.Document) -> None:
-        self.last_doc = doc
         self._gcode_cache = None                # new geometry → re-render G-code on demand
         self._estimated_total_s = 0.0
         # Worker stashes the mask path it used (when bg-removal ran).
@@ -1086,6 +1184,8 @@ class Main(QMainWindow):
             )
         except Exception:
             self._last_canvas_mm = 125.0
+        doc = self._apply_layout(doc)
+        self.last_doc = doc
         self.viewer.set_document(doc)
         # Debug: log every layer that ended up in the doc.
         layer_summary = [
@@ -1117,6 +1217,61 @@ class Main(QMainWindow):
         self.save_btn.setEnabled(has)
         self.save_svg_btn.setEnabled(has)
         self._update_stream_button()
+
+    def _apply_layout(self, doc: vp.Document) -> vp.Document:
+        """Scale the generated drawing and stamp the branding text on layer 3.
+
+        Scale is applied around the canvas centre, so the drawing shrinks into
+        the middle of the paper. Branding puts `HACKCLUB.COM` in the top-left
+        and clips any stroke that would cross its reserved whitespace.
+        """
+        scale = float(self.scale_row.value())
+        branding = self.branding_toggle.isChecked()
+
+        if not branding:
+            return doc
+
+        try:
+            tmp_doc = execute(_branding_text_cmd(scale=scale))
+        except Exception as exc:
+            print(f"Branding text skipped: {exc}", file=sys.stderr)
+            return doc
+        tlc = tmp_doc.layers.get(_BRANDING_LAYER)
+        if tlc is None or len(tlc) == 0:
+            return doc
+        bounds = tlc.bounds()
+        if bounds is None:
+            return doc
+        tmin_x, tmin_y, tmax_x, tmax_y = bounds
+        # Shift the baseline so the glyph's top-left bbox corner lands at
+        # (edge, edge) — equal top and left margin, regardless of font metrics.
+        edge_px = _BRANDING_EDGE_MM * _PX_PER_MM
+        shift_x = edge_px - tmin_x
+        shift_y = edge_px - tmin_y
+        text_max_x = tmax_x + shift_x
+        text_max_y = tmax_y + shift_y
+        margin_px = _BRANDING_MARGIN_MM * _PX_PER_MM
+        exclusion = (0.0, 0.0, text_max_x + margin_px, text_max_y + margin_px)
+
+        for lid in list(doc.layers.keys()):
+            lc = doc.layers[lid]
+            new_lines = []
+            for line in lc:
+                new_lines.extend(_clip_polyline_against_box(line, exclusion))
+            doc.layers[lid] = vp.LineCollection(new_lines)
+
+        # Hershey text emits one polyline per stroke — heavy on pen-up/down.
+        # Merge strokes whose endpoints coincide (fuses shared joints in a
+        # glyph, e.g. the two verticals of `H`), then two-opt the layer to
+        # chase the minimum travel. Two-opt is fine here because the text
+        # layer is tiny (a few dozen strokes after merging).
+        doc = execute(
+            _branding_text_cmd(pos_px=(shift_x, shift_y), scale=scale)
+            + f" linemerge --layer {_BRANDING_LAYER} --tolerance 0.3mm"
+            + f" linesort --layer {_BRANDING_LAYER} --two-opt",
+            document=doc,
+        )
+        return doc
 
     def _generate_failed(self, msg: str) -> None:
         self.statusBar().showMessage(f"Error: {msg.splitlines()[0]}")
