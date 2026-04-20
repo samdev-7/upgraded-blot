@@ -104,19 +104,28 @@ You'll see a window with three tabs.
 
 ### Typical first-plot sequence
 
-1. Tape a piece of paper to the bed.
-2. Control tab → **Connect**.
-3. **Home the machine.**
+First, a one-time setup each session (do this after powering up the Blot, restarting it, or changing pens):
+
+1. Tape a piece of paper to a flat surface.
+2. If you're going fast, tape the Blot down too.
+3. **Plug in the Blot.** Control tab → pick the USB port (something like `/dev/cu.usbmodem…`) → **Connect**.
+4. **Home the machine.**
    - Click **Disable motors (M18)**. The carriage now moves freely by hand.
-   - Hand-move the carriage to where you want the top-left of the drawing.
+   - Hand-move the carriage to where you want the bottom-left of the drawing.
    - Click **Enable motors (M17)** to lock the carriage in place.
    - Click **Set origin (G92)** to call that spot (0, 0).
-4. **Adjust the pen.**
+5. **Adjust the pen.**
    - Click **Pen down (M3)**. The holder drops to its down position.
    - Slide the pen into the holder so that when the pen tip is resting on the paper, the holder sits _slightly_ above its mechanical bottom. You want gravity pulling the pen down onto the paper, that way the tip self-levels.
    - Tighten the holder around the pen.
    - Click **Pen up (M5)** and verify the tip clears the paper with room to spare.
-5. Click **Send G-code**. Watch the first few strokes. If anything looks wrong, hit **Cancel** or press the physical reset on the board.
+
+Then, for every plot (loop this as many times as you want — as long as the Blot stays powered and doesn't move, origin and pen calibration carry over):
+
+1. **Capture a photo.** Camera tab → pick your webcam → **Capture** → drag the square overlay to crop → **Use cropped photo →**.
+2. **Generate the drawing.** You'll be moved to the Generate tab → pick an algorithm (Stipple / Scribble / Long lines) → tweak parameters if you want → **Generate**. Wait for the plotter preview to show up; make sure it's what you want before sending it to the plotter.
+3. **Send it.** Control tab → **Send G-code**. Watch the first few strokes. If anything looks wrong, hit **Cancel** or press the physical reset on the board.
+4. When it's done, the pen parks at `X0 Y120` so you can lift the paper out without smudging.
 
 ## Talking to the firmware without the UI
 
