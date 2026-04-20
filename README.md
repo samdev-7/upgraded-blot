@@ -25,7 +25,7 @@ Stock Blot's firmware uses a hand-rolled serial protocol that is inefficient and
 
 I built it for [RMRRF](https://rmrrf.com) 2026 as an interactive exhibit, the UI is just a convenient bundle of _photo → pen strokes → send_ for the event. **Any GRBL-speaking sender will drive the plotter just fine once the firmware is flashed**
 
-Everything else (hardware, wiring, assembly, the Blot bill of materials) is unchanged. Use Hack Club's docs in the top level folder for that.
+Everything else (hardware, wiring, assembly, the Blot bill of materials) is unchanged. Use Hack Club's docs in the [original repo](https://github.com/hackclub/blot) for that.
 
 > The UI is Mac-only for now as it uses Apple Vision for local background removal and AVFoundation for camera capture. The firmware, however, is cross-platform and can be driven by any G-code sender on any OS.
 
