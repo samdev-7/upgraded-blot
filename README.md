@@ -2,8 +2,8 @@
 
 > **Heads up.** This project was built in an afternoon for RMRRF. Changes from the stock blot were made with the help of AI (Claude Opus). It's not my best work, but it's what I could do with limited time.
 
-![](https://cdn.hackclub.com/019dac2d-420c-7c59-98bc-546af7972c20/frame_3.jpg)
-^ this took only 90 seconds to draw on a 70x70mm sticky note
+![](https://cdn.hackclub.com/019db65e-ba0f-74fa-a012-f10714f179ee/frame_4.jpg)
+^ this took only 90 seconds to draw (70x70mm - sticky note sized)
 
 A fork of [Blot](https://blot.hackclub.com) (Hack Club's 2-axis pen plotter) for GRBL-compatibility and photo-to-plotter desktop app. Originally built for [RMRRF](https://rmrrf.com) 2026 as an interactive exhibit. See the [original Blot repo](https://github.com/hackclub/blot) for hardware design, assembly instructions, and the stock firmware.
 
