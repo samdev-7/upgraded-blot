@@ -1,6 +1,8 @@
 # upgraded-blot
 
-> **Heads up.** This project was built in an afternoon for RMRRF. Changes from the stock blot were made with the help of AI (Claude Opus). It's not my best work, but it's what I could do with limited time.
+> **Heads up.** This was a last minute addition and the firmware and UI were built in an afternoon. Changes from the stock blot were made with the help of AI (Claude Opus). It's not my best work, but it's what I could do with limited time.
+
+Free marketing and a very effective attention-grabber! We drew folks on sticky notes and gave them out. It was super popular and folks stuck it on their badge.
 
 ![](https://cdn.hackclub.com/019db65e-ba0f-74fa-a012-f10714f179ee/frame_4.jpg)
 ^ [Zack Freedman](https://www.youtube.com/zackfreedman) from Voidstar Lab on YT!  
